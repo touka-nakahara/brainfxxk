@@ -56,34 +56,27 @@ func NewParser(input []rune) *Parser {
 	return p
 }
 
-func (p *Parser) Parse(inst Instruction) Instruction {
+func (p *Parser) Parse() *Instruction {
+	mainInst := NewInstruction()
+	stack := []*Instruction{mainInst}
+
 	for p.position < len(p.input) {
 		token := p.input[p.position]
-		switch token {
-		case 6:
-			nastedInst := NewInstruction()
-			nasted := p.Parse(*nastedInst)
-			inst.instruction = append(inst.instruction, nasted)
-		case 7:
-			return inst
-		default:
-			inst.instruction = append(inst.instruction, token)
-		}
 		p.position++
-	}
-	return inst
-}
 
-// // func Parser(tokens []rune) {
-// // 	instructions := New()
-// // 	for _, token := range tokens {
-// 		switch token {
-// 		case 6:
-// 			instructions.childlen
-// 		case 7:
-// 			return
-// 		default:
-// 			instructions.instruction = append(instructions.instruction, token)
-// 		}
-// 	}
-// }
+		switch token {
+		case op_jmp_fwd:
+			nastedInst := NewInstruction()
+			currentInst := stack[len(stack)-1]
+			currentInst.instruction = append(currentInst.instruction, nastedInst)
+			stack = append(stack, nastedInst)
+		case op_jmp_bck:
+			stack = stack[:len(stack)-1]
+		default:
+			currentInst := stack[len(stack)-1]
+			currentInst.instruction = append(currentInst.instruction, token)
+		}
+
+	}
+	return mainInst
+}

@@ -37,9 +37,11 @@ func main() {
 
 	fmt.Printf("Execution time: %s\n", elapsed)
 	out := interpreter.Token(string(buf))
+
+	fmt.Println(out)
+	
 	parser := interpreter.NewParser(out)
-	inst := interpreter.NewInstruction()
-	res := parser.Parse(*inst)
+	res := parser.Parse()
 	
 	fmt.Println(res)
 
