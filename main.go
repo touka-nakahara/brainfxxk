@@ -32,11 +32,15 @@ func main() {
 
 	// fmt.Printf("%s", string(buf))
 	start := time.Now()
-	interpreter.InterpretProgram(string(buf))
+	// interpreter.InterpretProgram(string(buf))
 	elapsed := time.Since(start)
 
 	fmt.Printf("Execution time: %s\n", elapsed)
-	// out := interpreter.Token(string(buf))
-	// fmt.Println(out)
+	out := interpreter.Token(string(buf))
+	parser := interpreter.NewParser(out)
+	inst := interpreter.NewInstruction()
+	res := parser.Parse(*inst)
+	
+	fmt.Println(res)
 
 }

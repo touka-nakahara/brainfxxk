@@ -7,8 +7,8 @@ const (
 	op_dec_val
 	op_out
 	op_in
-	op_jmp_bck
 	op_jmp_fwd
+	op_jmp_bck
 )
 
 // 字句解析
@@ -38,7 +38,12 @@ func Token(command string) []rune {
 }
 
 type Instruction struct {
-	Instruction []interface{} // どうしようもない
+	instruction []interface{} // どうしようもない
+}
+
+func NewInstruction() *Instruction {
+	i := &Instruction{}
+	return i
 }
 
 type Parser struct {
@@ -51,26 +56,23 @@ func NewParser(input []rune) *Parser {
 	return p
 }
 
-// func New() *Instrcution {
-// 	i := &Instrcution{}
-// 	return i
-// }
-
-// func (p *Parser) Parse(inst Instrcution) Instrcution {
-// 	for p.position < len(p.input) {
-// 		token := p.input[p.position]
-// 		switch token {
-// 		case 6:
-// 			p.Parse(*inst.childlen)
-// 		case 7:
-// 			return inst
-// 		default:
-// 			inst.instruction = append(inst.instruction, token)
-// 		}
-// 		p.position++
-// 	}
-// 	return inst
-// }
+func (p *Parser) Parse(inst Instruction) Instruction {
+	for p.position < len(p.input) {
+		token := p.input[p.position]
+		switch token {
+		case 6:
+			nastedInst := NewInstruction()
+			nasted := p.Parse(*nastedInst)
+			inst.instruction = append(inst.instruction, nasted)
+		case 7:
+			return inst
+		default:
+			inst.instruction = append(inst.instruction, token)
+		}
+		p.position++
+	}
+	return inst
+}
 
 // // func Parser(tokens []rune) {
 // // 	instructions := New()
