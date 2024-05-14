@@ -3,11 +3,14 @@ package brainfxxk
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"os"
 )
 
+const MEMORYMAX int = 128
+
 func Interpreter(command string) {
-	var memory [128]int
+	var memory [MEMORYMAX]int
 	in := bufio.NewReader(os.Stdin)
 	pointer := 0
 	idx := 0
@@ -15,8 +18,16 @@ func Interpreter(command string) {
 		switch command[idx] {
 		case '>':
 			pointer++
+			if pointer >= MEMORYMAX {
+				fmt.Printf("Error: Out of Range: Memory Access :[%d]\n", pointer)
+				return
+			}
 		case '<':
 			pointer--
+			if pointer < 0 {
+				fmt.Printf("Error: Out of Ranger Memory Access :[%d]\n", pointer)
+				return
+			}
 		case '+':
 			memory[pointer]++
 		case '-':
@@ -24,7 +35,10 @@ func Interpreter(command string) {
 		case '.':
 			fmt.Printf("%c", memory[pointer])
 		case ',':
-			byte, _ := in.ReadByte()
+			byte, err := in.ReadByte()
+			if err == io.EOF {
+				return
+			}
 			memory[pointer] = int(byte)
 		case '[':
 			if memory[pointer] == 0 {
