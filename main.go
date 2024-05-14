@@ -1,10 +1,11 @@
 package main
 
 import (
-	brainfxxk "brainfxxk/interpriter"
 	"fmt"
+	interpreter "interpteter/interpriter"
 	"io"
 	"os"
+	"time"
 )
 
 func main() {
@@ -19,17 +20,23 @@ func main() {
 	f, err := os.Open(args[1])
 
 	if err != nil {
-		fmt.Printf("os.Open: %s", err)
+		fmt.Printf("os.Open: %s\n", err)
 		return
 	}
 
 	buf, err := io.ReadAll(f)
 	if err != nil {
-		fmt.Printf("io.ReadAll: %s", err)
+		fmt.Printf("io.ReadAll: %s\n", err)
 		return
 	}
 
-	fmt.Printf("%s", string(buf))
+	// fmt.Printf("%s", string(buf))
+	start := time.Now()
+	interpreter.InterpretProgram(string(buf))
+	elapsed := time.Since(start)
 
-	brainfxxk.Interpreter(string(buf))
+	fmt.Printf("Execution time: %s\n", elapsed)
+	// out := interpreter.Token(string(buf))
+	// fmt.Println(out)
+
 }
