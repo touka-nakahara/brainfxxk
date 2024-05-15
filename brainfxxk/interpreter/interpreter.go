@@ -1,14 +1,13 @@
 package brainfxxk
 
-import (
-	"bufio"
-	"fmt"
-	"os"
-)
+func Run(command string) (string, error) {
+	return Interpreter(command), nil
+}
 
-func Interpreter(command string) {
-	var memory [128]int
-	in := bufio.NewReader(os.Stdin)
+func Interpreter(command string) string {
+	var result string = ""
+	var memory [10000000]int
+	// in := bufio.NewReader(os.Stdin)
 	pointer := 0
 	idx := 0
 	for idx < len(command) {
@@ -22,10 +21,12 @@ func Interpreter(command string) {
 		case '-':
 			memory[pointer]--
 		case '.':
-			fmt.Printf("%c", memory[pointer])
+			// fmt.Printf("%c", memory[pointer])
+			result += string(memory[pointer])
 		case ',':
-			byte, _ := in.ReadByte()
-			memory[pointer] = int(byte)
+			// httpの場合は無視
+			// byte, _ := in.ReadByte()
+			// memory[pointer] = int(byte)
 		case '[':
 			if memory[pointer] == 0 {
 				// 対応する]が見つかるまでidxを進める
@@ -63,5 +64,5 @@ func Interpreter(command string) {
 		}
 		idx++
 	}
-	fmt.Println("")
+	return result
 }
