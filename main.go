@@ -1,7 +1,7 @@
 package main
 
 import (
-	brainfxxk "brainfxxk/interpriter"
+	brainfxxk "brainfxxk/interpreter"
 	"fmt"
 	"io"
 	"os"
