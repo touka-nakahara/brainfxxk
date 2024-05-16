@@ -7,7 +7,7 @@ import (
 )
 
 func Run(command string) (string, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
 	resultCh := make(chan string)
