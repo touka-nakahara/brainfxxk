@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -24,17 +25,17 @@ func StartServer() {
 		IdleTimeout: 24 * time.Hour,
 		Handler:     r,
 	}
-
 	go func() {
-		<-ctx.Done()
-		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-		defer cancel()
-		s.Shutdown(ctx)
+		// 通常のシャットダウンチェック
+		if err := s.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {
+			log.Fatalf("HTTP server error: %v", err)
+		}
 	}()
 
-	// 通常のシャットダウンチェック
-	if err := s.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {
-		log.Fatalf("HTTP server error: %v", err)
-	}
+	<-ctx.Done()                                                            // キャンセル通知が来たら
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second) // タイムアウトのコンテキスト生成s
+	defer cancel()
+	s.Shutdown(ctx) // アイドル状態になってからシャットダウン
+	fmt.Println("Server: graceful shutdown")
 
 }
