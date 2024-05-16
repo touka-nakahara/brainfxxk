@@ -1,7 +1,29 @@
 package brainfxxk
 
+import (
+	"context"
+	"fmt"
+	"time"
+)
+
 func Run(command string) (string, error) {
-	return Interpreter(command), nil
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+
+	resultCh := make(chan string)
+
+	go func() {
+		output := Interpreter(command)
+		resultCh <- output
+	}()
+
+	select {
+	case <-ctx.Done():
+		return "", fmt.Errorf("Interpreter Time Out")
+	case output := <-resultCh:
+		return output, nil
+	}
+
 }
 
 func Interpreter(command string) string {

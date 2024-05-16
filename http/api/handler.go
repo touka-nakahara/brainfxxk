@@ -21,10 +21,9 @@ func BrainfxxkFuncPOST(w http.ResponseWriter, r *http.Request) {
 	command := string(body)
 
 	// brainfxxkの起動
-	//TODO レスポンスとBFの起動は分けたい
 	result, err := brainfxxk.Run(command)
 	if err != nil {
-		http.Error(w, "Failed to interept", http.StatusForbidden)
+		http.Error(w, err.Error(), http.StatusForbidden)
 		return
 	}
 
