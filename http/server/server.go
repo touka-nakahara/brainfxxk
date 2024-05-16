@@ -32,6 +32,7 @@ func StartServer() {
 		IdleTimeout: config.IdleTimeout,
 		Handler:     r,
 	}
+	
 	go func() {
 		// 通常のシャットダウンチェック
 		if err := s.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {

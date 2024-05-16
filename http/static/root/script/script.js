@@ -10,7 +10,7 @@ function main () {
     request.send(inputText.value)
     request.onload = () => {
       const stdOutText = document.getElementById("stdout")
-      stdOutText.value = `[${request.status}]\n ${request.response}`
+      stdOutText.value = ` ${request.response}`
     }
   })
 }
