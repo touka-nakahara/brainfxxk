@@ -7,7 +7,7 @@ import (
 )
 
 func Run(command string) (string, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
 	defer cancel()
 
 	resultCh := make(chan string)
@@ -23,7 +23,6 @@ func Run(command string) (string, error) {
 	case output := <-resultCh:
 		return output, nil
 	}
-
 }
 
 func Interpreter(command string) string {
