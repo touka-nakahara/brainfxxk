@@ -1,55 +1,40 @@
 package server
 
 import (
-	"fmt"
-	"io"
+	"context"
+	"errors"
 	"log"
 	"net/http"
+	"os"
+	"os/signal"
+	"time"
 
-	brainfxxk "brainfxxk/brainfxxk/interpreter"
+	"brainfxxk/http/api"
 )
 
-func IndexHandleFuncGET(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path == "/" {
-		http.ServeFile(w, r, "http/static/root/")
-	}
-}
+func StartServer() {
+	// interruptシグナルを受信したときに、コンテキストにキャンセルを通知する
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
+	defer stop()
 
-func BrainfxxkFuncPOST(w http.ResponseWriter, r *http.Request) {
-	// bodyの解釈
-	//TODO ここで全部読み込んだ方がいい気がする (入力の読み込みのエラーとBrainFxxkの読み込みを分けたい)
-	body, err := io.ReadAll(r.Body)
-	if err != nil {
-		http.Error(w, "Failed to read request body", http.StatusBadRequest)
-		return
+	r := api.NewRouter()
+
+	s := http.Server{
+		Addr:        ":80",
+		IdleTimeout: 24 * time.Hour,
+		Handler:     r,
 	}
 
-	command := string(body)
+	go func() {
+		<-ctx.Done()
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+		s.Shutdown(ctx)
+	}()
 
-	// brainfxxkの起動
-	//TODO レスポンスとBFの起動は分けたい
-	result, err := brainfxxk.Run(command)
-	if err != nil {
-		http.Error(w, "Failed to interept", http.StatusForbidden)
+	// 通常のシャットダウンチェック
+	if err := s.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {
+		log.Fatalf("HTTP server error: %v", err)
 	}
 
-	// レスポンス返答(text/plain)
-	w.Header().Set("Content-Type", "text/plain")
-
-	fmt.Fprintln(w, result)
-}
-
-func Server() {
-
-	s := http.Server{}
-
-	//TODO forループでhanderスライスを見て, ハンドル登録する
-	http.Handle("GET /", http.FileServer(http.Dir("http/static/root")))
-	http.HandleFunc("POST /run", BrainfxxkFuncPOST)
-
-	err := s.ListenAndServe()
-
-	if err != nil {
-		log.Fatal(err)
-	}
 }

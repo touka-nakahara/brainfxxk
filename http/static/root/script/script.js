@@ -9,12 +9,8 @@ function main () {
     request.responseType = "text"
     request.send(inputText.value)
     request.onload = () => {
-      if (request.status != 200) {
-        alert('Error ${request.status}: ${request.statusText}')
-        return null;
-      }
       const stdOutText = document.getElementById("stdout")
-      stdOutText.value = request.response
+      stdOutText.value = `[${request.status}] ${request.response}`
     }
   })
 }
