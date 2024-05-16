@@ -1,7 +1,7 @@
 package main
 
 import (
-	brainfxxk "brainfxxk/interpreter"
+	brainfxxk "brainfxxk/brainfxxk/interpreter"
 	"fmt"
 	"io"
 	"os"
@@ -28,8 +28,6 @@ func main() {
 		fmt.Printf("io.ReadAll: %s", err)
 		return
 	}
-
-	fmt.Printf("%s", string(buf))
 
 	brainfxxk.Interpreter(string(buf))
 }
