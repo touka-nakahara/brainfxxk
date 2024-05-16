@@ -29,5 +29,6 @@ func main() {
 		return
 	}
 
-	brainfxxk.Interpreter(string(buf))
+	output := brainfxxk.Interpreter(string(buf))
+	fmt.Println(output)
 }
