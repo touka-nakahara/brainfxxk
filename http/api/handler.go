@@ -13,6 +13,7 @@ func BrainfxxkFuncPOST(w http.ResponseWriter, r *http.Request) {
 	//TODO ここで全部読み込んだ方がいい気がする (入力の読み込みのエラーとBrainFxxkの読み込みを分けたい)
 	//TODO r.Bodyがめっちゃデカかったら壊れそう
 	body, err := io.ReadAll(r.Body)
+	defer r.Body.Close() //TODO 本当に必要かわからないので調べる
 	if err != nil {
 		http.Error(w, "Failed to read request body", http.StatusBadRequest)
 		return

@@ -13,6 +13,13 @@ import (
 	"brainfxxk/http/api"
 )
 
+var (
+	config = &ServerConfig{
+		Address:     ":80",
+		IdleTimeout: 24 * time.Hour,
+	}
+)
+
 func StartServer() {
 	// interruptシグナルを受信したときに、コンテキストにキャンセルを通知する
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
@@ -21,8 +28,8 @@ func StartServer() {
 	r := api.NewRouter()
 
 	s := http.Server{
-		Addr:        ":80",
-		IdleTimeout: 24 * time.Hour,
+		Addr:        config.Address,
+		IdleTimeout: config.IdleTimeout,
 		Handler:     r,
 	}
 	go func() {
